@@ -96,6 +96,8 @@ dd {
 
 .loan-calculator {
   display: grid;
+  /* minmax(0, …) lets the table scroll inside its panel instead of widening the page. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
 }
 

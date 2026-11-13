@@ -85,7 +85,7 @@ export function LoanCalculator() {
         <p
           role="status"
           aria-live="polite"
-          className={state.status === 'success' ? 'visually-hidden' : 'message'}
+          className={statusMessage && state.status !== 'success' ? 'message' : 'visually-hidden'}
         >
           {statusMessage}
         </p>
