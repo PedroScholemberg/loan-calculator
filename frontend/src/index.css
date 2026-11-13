@@ -1,111 +1,427 @@
+/* ---------- Design tokens ---------- */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --color-bg: #f3f5f8;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f7f9fb;
+  --color-text: #1b2430;
+  --color-text-muted: #4f5b6a;
+  --color-border: #d4dae2;
+  --color-border-strong: #8a96a5;
+  --color-primary: #1d4ed8;
+  --color-primary-hover: #1e40af;
+  --color-primary-soft: #e6eefc;
+  --color-danger: #b42318;
+  --color-danger-soft: #fef3f2;
+  --color-success: #05603a;
+  --color-success-soft: #e8f6ee;
+  --color-focus: #1d4ed8;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --radius: 8px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  --font-sans: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  color-scheme: light;
+  font: 16px/1.5 var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  min-width: 320px;
+  background: var(--color-bg);
 }
 
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
+h2,
+h3,
+p,
+dl,
+dd {
   margin: 0;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Layout ---------- */
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.app__header {
+  margin-bottom: var(--space-5);
+}
+
+.app__title {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.app__subtitle {
+  margin-top: var(--space-2);
+  max-width: 60ch;
+  color: var(--color-text-muted);
+}
+
+.loan-calculator {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+}
+
+.panel__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.panel__description {
+  margin-top: var(--space-1);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Form ---------- */
+.loan-form {
+  margin-top: var(--space-5);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.loan-form__row {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.loan-form__actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.field__label {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.field__control {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.field__control:focus-within {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.field__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  font: inherit;
+  color: inherit;
+}
+
+.field__input:focus-visible {
+  outline: none; /* Ring is drawn on .field__control. */
+}
+
+.field__input::placeholder {
+  color: #6b7683;
+}
+
+.field__adornment {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.field__adornment:first-child {
+  border-right: 1px solid var(--color-border);
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.field__adornment:last-child {
+  border-left: 1px solid var(--color-border);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.field__hint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.field__error {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-danger);
+}
+
+.field--invalid .field__control {
+  border-color: var(--color-danger);
+  box-shadow: inset 0 0 0 1px var(--color-danger);
+}
+
+/* ---------- Buttons ---------- */
+.button {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button--primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.button--secondary {
+  background: var(--color-surface);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.button--secondary:hover:not(:disabled) {
+  background: var(--color-surface-muted);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+}
+
+/* Keeps the "Calculando…" label readable (white on #3e5fb8 ≈ 5.7:1). */
+.button--primary:disabled {
+  cursor: progress;
+  background: #3e5fb8;
+}
+
+/* ---------- Results ---------- */
+.message {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.message--error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border: 1px solid #f4b8b0;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
+.results__title {
+  margin: var(--space-6) 0 var(--space-3);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.summary {
+  margin-top: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.summary__item {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface-muted);
+}
+
+.summary__label {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.summary__value {
+  margin-top: var(--space-1);
+  font-size: 1.375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Schedule table ---------- */
+.table-scroll {
+  overflow: auto;
+  max-height: 70vh;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.schedule {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.schedule__caption {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+}
+
+.schedule th,
+.schedule td {
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.schedule thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #e9edf2;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.schedule tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.schedule .schedule__number {
+  text-align: right;
+}
+
+.schedule__date {
+  font-weight: 500;
+}
+
+.schedule__row--MONTH_END {
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.schedule__row--PAYMENT > .schedule__date {
+  box-shadow: inset 4px 0 0 var(--color-primary);
+}
+
+.event-badge {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: #e9edf2;
+  color: #364152;
+}
+
+.event-badge--PAYMENT {
+  background: var(--color-primary-soft);
+  color: #1e3a8a;
+}
+
+.event-badge--LOAN_START {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.event-badge--LOAN_END {
+  background: #1b2430;
+  color: #fff;
+}
+
+/* ---------- Breakpoints ---------- */
+@media (min-width: 640px) {
+  .app {
+    padding: var(--space-6);
+  }
+
+  .loan-form__row--values {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .loan-form__actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .app__title {
+    font-size: 2rem;
+  }
+
+  .loan-form__row--dates {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
