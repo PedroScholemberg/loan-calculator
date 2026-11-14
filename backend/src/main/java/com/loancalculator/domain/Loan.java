@@ -4,19 +4,21 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Loan {
-    LocalDate startDate;
-    LocalDate endDate;
-    LocalDate firstPaymentDate;
-    BigDecimal principal;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private LocalDate firstPaymentDate;
+    private BigDecimal principal;
+    private BigDecimal interestRate;
 
     public Loan() {
     }
 
-    public Loan(LocalDate startDate, LocalDate endDate, LocalDate firstPaymentDate, BigDecimal principal) {
+    public Loan(LocalDate startDate, LocalDate endDate, LocalDate firstPaymentDate, BigDecimal principal, BigDecimal interestRate) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.firstPaymentDate = firstPaymentDate;
         this.principal = principal;
+        this.interestRate = interestRate;
     }
 
     public LocalDate getStartDate() {
@@ -49,5 +51,13 @@ public class Loan {
 
     public void setPrincipal(BigDecimal principal) {
         this.principal = principal;
+    }
+
+    public BigDecimal getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(BigDecimal interestRate) {
+        this.interestRate = interestRate;
     }
 }
