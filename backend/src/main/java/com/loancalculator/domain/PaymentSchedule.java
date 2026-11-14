@@ -19,4 +19,11 @@ public class PaymentSchedule {
     public void setEvents(List<ScheduleEvent> events) {
         this.events = events;
     }
+
+    public int getInstallmentCount() {
+        if (events == null) {
+            return 0;
+        }
+        return (int) events.stream().filter(ScheduleEvent::isPayment).count();
+    }
 }
