@@ -14,7 +14,7 @@ const REQUEST: AmortizationScheduleRequest = {
 
 const RESPONSE: AmortizationScheduleResponse = {
   schedule: [],
-  summary: { totalInterest: 1, totalAmortization: 2, totalPayment: 3 },
+  summary: { installmentCount: 0, totalInterest: 1, totalAmortization: 2, totalPayment: 3 },
 }
 
 function jsonResponse(body: unknown, status = 200) {

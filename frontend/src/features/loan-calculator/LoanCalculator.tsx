@@ -105,7 +105,7 @@ export function LoanCalculator() {
           <>
             <LoanSummary summary={state.result.summary} />
             <h3 className="results__title">Cronograma de Amortização</h3>
-            <AmortizationTable schedule={state.result.schedule} />
+            <AmortizationTable schedule={state.result.schedule} installmentCount={state.result.summary.installmentCount} />
           </>
         )}
       </section>

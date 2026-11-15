@@ -51,24 +51,23 @@ public class LoanService {
 
     private AmortizationScheduleResponse toResponse(Loan loan, LoanSimulationResult result) {
         List<ScheduleEntry> entries = new ArrayList<>();
-        BigDecimal openingBalance = loan.getPrincipal();
         BigDecimal totalInterest = BigDecimal.ZERO;
         BigDecimal totalAmortization = BigDecimal.ZERO;
         BigDecimal totalPayment = BigDecimal.ZERO;
         for (LoanCalculationRow row : result.getRows()) {
-            BigDecimal closingBalance = row.getLoan().getOutstandingBalance();
             entries.add(new ScheduleEntry(row.getEvent().getDate(), eventType(loan, row.getEvent()),
-                    money(openingBalance), money(row.getInterest().getProvision()),
-                    money(row.getPrincipal().getAmortization()), money(row.getInstallment().getTotal()),
-                    money(closingBalance)));
+                    row.getEvent().getInstallmentNumber(), money(row.getLoan().getLoanAmount()),
+                    money(row.getLoan().getOutstandingBalance()), money(row.getInstallment().getTotal()),
+                    money(row.getPrincipal().getAmortization()), money(row.getPrincipal().getRemainingBalance()),
+                    money(row.getInterest().getProvision()), money(row.getInterest().getAccumulated()),
+                    money(row.getInterest().getPaid())));
             totalInterest = totalInterest.add(row.getInterest().getPaid());
             totalAmortization = totalAmortization.add(row.getPrincipal().getAmortization());
             totalPayment = totalPayment.add(row.getInstallment().getTotal());
-            openingBalance = closingBalance;
         }
         // Sum the original values before applying presentation rounding.
         return new AmortizationScheduleResponse(entries, new ScheduleSummary(
-                money(totalInterest), money(totalAmortization), money(totalPayment)));
+                result.getInstallmentCount(), money(totalInterest), money(totalAmortization), money(totalPayment)));
     }
 
     private ScheduleEventType eventType(Loan loan, ScheduleEvent event) {

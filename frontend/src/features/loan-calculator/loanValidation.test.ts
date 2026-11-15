@@ -50,14 +50,14 @@ describe('validateLoanForm', () => {
     expect(errorsFor({ endDate: '2023-12-31' }).endDate).toBeDefined()
   })
 
-  it('requires the first payment to be after the start date and not after the end date', () => {
+  it('requires the first payment to be after the start date and before the end date', () => {
     expect(errorsFor({ firstPaymentDate: '2024-01-01' }).firstPaymentDate).toBe(
       'O primeiro pagamento deve ser posterior à data inicial.',
     )
     expect(errorsFor({ firstPaymentDate: '2034-01-02' }).firstPaymentDate).toBe(
-      'O primeiro pagamento não pode ultrapassar a data final.',
+      'O primeiro pagamento deve ser anterior à data final.',
     )
-    expect(errorsFor({ firstPaymentDate: '2034-01-01' })).toEqual({})
+    expect(errorsFor({ firstPaymentDate: '2034-01-01' }).firstPaymentDate).toBe('O primeiro pagamento deve ser anterior à data final.')
   })
 
   it('requires a positive principal with at most two decimals', () => {

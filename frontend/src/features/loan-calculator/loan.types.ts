@@ -28,14 +28,19 @@ export type ScheduleEventType = (typeof EVENT_TYPES)[number]
 export interface ScheduleEntry {
   date: IsoDate
   eventType: ScheduleEventType
-  openingBalance: number
-  interest: number
+  installmentNumber: number | null
+  loanAmount: number
+  outstandingBalance: number
+  totalPayment: number
   amortization: number
-  payment: number
-  closingBalance: number
+  remainingPrincipal: number
+  interestProvision: number
+  accumulatedInterest: number
+  paidInterest: number
 }
 
 export interface ScheduleSummary {
+  installmentCount: number
   totalInterest: number
   totalAmortization: number
   totalPayment: number

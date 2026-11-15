@@ -341,10 +341,13 @@ dd {
   text-align: left;
 }
 
-.schedule thead th {
+.schedule thead {
   position: sticky;
   top: 0;
   z-index: 1;
+}
+
+.schedule thead th {
   background: #e9edf2;
   font-size: 0.8125rem;
   font-weight: 600;

@@ -1,43 +1,20 @@
-import { formatCurrency, formatIsoDate } from '../../utils/format'
-import type { ScheduleEntry, ScheduleEventType } from './loan.types'
+﻿import { formatCurrency, formatIsoDate } from '../../utils/format'
+import type { ScheduleEntry } from './loan.types'
 
-const EVENT_LABELS: Record<ScheduleEventType, string> = {
-  LOAN_START: 'Início do empréstimo',
-  MONTH_END: 'Fechamento mensal',
-  PAYMENT: 'Pagamento',
-  LOAN_END: 'Encerramento',
-}
-
-const MONEY_COLUMNS = [
-  { key: 'openingBalance', label: 'Saldo inicial' },
-  { key: 'interest', label: 'Juros' },
-  { key: 'amortization', label: 'Amortização' },
-  { key: 'payment', label: 'Pagamento' },
-  { key: 'closingBalance', label: 'Saldo final' },
-] as const satisfies readonly { key: keyof ScheduleEntry; label: string }[]
+const PAYMENT_COLUMNS = ['totalPayment', 'amortization', 'remainingPrincipal',
+  'interestProvision', 'accumulatedInterest', 'paidInterest'] as const
 
 interface AmortizationTableProps {
-  /** Rows in the order returned by the backend. */
   schedule: ScheduleEntry[]
+  installmentCount: number
 }
 
-export function AmortizationTable({ schedule }: AmortizationTableProps) {
+export function AmortizationTable({ schedule, installmentCount }: AmortizationTableProps) {
   if (schedule.length === 0) {
-    return (
-      <p className="message">
-        Nenhum evento foi retornado para os parâmetros informados.
-      </p>
-    )
+    return <p className="message">Nenhum evento foi retornado para os parâmetros informados.</p>
   }
-
   return (
-    // Focusable so keyboard users can scroll the table horizontally.
-    <div
-      className="table-scroll"
-      role="region"
-      aria-labelledby="schedule-caption"
-      tabIndex={0}
-    >
+    <div className="table-scroll" role="region" aria-labelledby="schedule-caption" tabIndex={0}>
       <table className="schedule">
         <caption id="schedule-caption" className="schedule__caption">
           Eventos financeiros do empréstimo ({schedule.length}{' '}
@@ -45,31 +22,30 @@ export function AmortizationTable({ schedule }: AmortizationTableProps) {
         </caption>
         <thead>
           <tr>
-            <th scope="col">Data</th>
-            <th scope="col">Evento</th>
-            {MONEY_COLUMNS.map(({ key, label }) => (
-              <th key={key} scope="col" className="schedule__number">
-                {label}
-              </th>
+            <th scope="col" rowSpan={2}>Data Competência</th>
+            <th scope="colgroup" colSpan={2}>Empréstimo</th>
+            <th scope="colgroup" colSpan={2}>Parcela</th>
+            <th scope="colgroup" colSpan={2}>Principal</th>
+            <th scope="colgroup" colSpan={3}>Juros</th>
+          </tr>
+          <tr>
+            {['Valor de Empréstimo', 'Saldo Devedor', 'Consolidada', 'Total',
+              'Amortização', 'Saldo', 'Provisão', 'Acumulado', 'Pago'].map((label) => (
+              <th key={label} scope="col" className="schedule__number">{label}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {schedule.map((entry, index) => (
-            // The list is replaced as a whole on each response, so the index is a stable key.
             <tr key={index} className={`schedule__row schedule__row--${entry.eventType}`}>
-              <th scope="row" className="schedule__date">
-                {formatIsoDate(entry.date)}
-              </th>
-              <td>
-                <span className={`event-badge event-badge--${entry.eventType}`}>
-                  {EVENT_LABELS[entry.eventType] ?? entry.eventType}
-                </span>
+              <th scope="row" className="schedule__date">{formatIsoDate(entry.date)}</th>
+              <td className="schedule__number">{index === 0 ? formatCurrency(entry.loanAmount) : ''}</td>
+              <td className="schedule__number">{formatCurrency(entry.outstandingBalance)}</td>
+              <td className="schedule__number">
+                {entry.installmentNumber === null ? '' : `${entry.installmentNumber}/${installmentCount}`}
               </td>
-              {MONEY_COLUMNS.map(({ key }) => (
-                <td key={key} className="schedule__number">
-                  {formatCurrency(entry[key])}
-                </td>
+              {PAYMENT_COLUMNS.map((key) => (
+                <td key={key} className="schedule__number">{formatCurrency(entry[key])}</td>
               ))}
             </tr>
           ))}

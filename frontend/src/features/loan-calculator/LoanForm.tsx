@@ -33,14 +33,20 @@ export function LoanForm({ isSubmitting, onSubmit, onChange, onClear }: LoanForm
   // After the first submit attempt, errors are re-evaluated on every change.
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const inputRefs = useRef<Partial<Record<LoanFormField, HTMLInputElement | null>>>({})
+  const validation = validateLoanForm(values)
 
   function updateValue(field: LoanFormField, value: string) {
     const next = { ...values, [field]: value }
     setValues(next)
-    if (hasSubmitted) {
-      const result = validateLoanForm(next)
-      setErrors(result.valid ? {} : result.errors)
-    }
+    const result = validateLoanForm(next)
+    setErrors((current) => {
+      if (result.valid) return {}
+      if (hasSubmitted) return result.errors
+      // Keep feedback for previously blurred fields current, including date dependencies.
+      return Object.fromEntries(
+        Object.keys(current).map((key) => [key, result.errors[key as LoanFormField]]),
+      )
+    })
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -94,6 +100,10 @@ export function LoanForm({ isSubmitting, onSubmit, onChange, onClear }: LoanForm
     error: errors[field],
     onChange: handleChange,
     required: true,
+    onBlur: () => {
+      const result = validateLoanForm(values)
+      setErrors((current) => ({ ...current, [field]: result.valid ? undefined : result.errors[field] }))
+    },
     ref: (element: HTMLInputElement | null) => {
       inputRefs.current[field] = element
     },
@@ -128,7 +138,10 @@ export function LoanForm({ isSubmitting, onSubmit, onChange, onClear }: LoanForm
             placeholder="140.000,00"
             prefix="R$"
             hint="Valor em reais. Exemplo: 140.000,00"
-            onBlur={normalizePrincipal}
+            onBlur={() => {
+              normalizePrincipal()
+              fieldProps('principal').onBlur()
+            }}
           />
           <FormField
             {...fieldProps('annualInterestRate')}
@@ -139,7 +152,10 @@ export function LoanForm({ isSubmitting, onSubmit, onChange, onClear }: LoanForm
             placeholder="7,00"
             suffix="%"
             hint="Percentual ao ano. Exemplo: 7,00"
-            onBlur={normalizeInterestRate}
+            onBlur={() => {
+              normalizeInterestRate()
+              fieldProps('annualInterestRate').onBlur()
+            }}
           />
         </div>
 
@@ -147,7 +163,7 @@ export function LoanForm({ isSubmitting, onSubmit, onChange, onClear }: LoanForm
           <Button variant="secondary" onClick={handleClear}>
             Limpar
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting || !validation.valid}>
             {isSubmitting ? 'Calculando…' : 'Calcular amortização'}
           </Button>
         </div>

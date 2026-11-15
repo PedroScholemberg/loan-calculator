@@ -56,8 +56,8 @@ function validateDates(values: LoanFormValues, errors: LoanFormErrors) {
   }
   if (startValid && firstPaymentValid && firstPaymentDate <= startDate) {
     errors.firstPaymentDate = 'O primeiro pagamento deve ser posterior à data inicial.'
-  } else if (endValid && firstPaymentValid && firstPaymentDate > endDate) {
-    errors.firstPaymentDate = 'O primeiro pagamento não pode ultrapassar a data final.'
+  } else if (endValid && firstPaymentValid && firstPaymentDate >= endDate) {
+    errors.firstPaymentDate = 'O primeiro pagamento deve ser anterior à data final.'
   }
 }
 
