@@ -1,0 +1,16 @@
+target/
+.git/
+.idea/
+.vscode/
+*.iml
+*.log
+.env
+.env.*
+**/application-local.*
+.aws/
+.m2/
+settings.xml
+**/*.pem
+**/*.key
+**/*.p12
+**/*.jks

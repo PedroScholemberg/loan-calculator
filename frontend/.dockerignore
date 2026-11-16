@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+.vite/
+.git/
+.idea/
+.vscode/
+.env
+.env.*
+.npmrc
+.npm/
+*.local
+*.log
+*.tsbuildinfo
+**/*.pem
+**/*.key
