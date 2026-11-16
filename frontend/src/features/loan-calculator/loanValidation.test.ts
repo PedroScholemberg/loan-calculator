@@ -79,4 +79,36 @@ describe('validateLoanForm', () => {
     )
     expect(errorsFor({ annualInterestRate: '0' })).toEqual({})
   })
+
+  it.each(['9'.repeat(309), `-${'9'.repeat(309)}`, 'NaN', 'Infinity', '-Infinity', 'abc'])(
+    'rejects invalid numeric values with field errors and no API request: %s',
+    (input) => {
+      expect(validateLoanForm({ ...VALID_VALUES, principal: input, annualInterestRate: input }))
+        .toEqual({
+          valid: false,
+          errors: {
+            principal: 'Informe um valor numérico válido, por exemplo 140.000,00.',
+            annualInterestRate: 'Informe uma taxa numérica válida, por exemplo 7,00.',
+          },
+        })
+    },
+  )
+
+  it.each([
+    ['R$ 1.234,56', '7,125%', 1234.56, 7.125],
+    ['140000.50', '7.125', 140000.5, 7.125],
+    ['140.000', '0', 140000, 0],
+    ['9'.repeat(308), '9'.repeat(308), Number('9'.repeat(308)), Number('9'.repeat(308))],
+  ])('accepts finite principal %s and rate %s', (principal, annualInterestRate, expectedPrincipal, expectedRate) => {
+    expect(validateLoanForm({ ...VALID_VALUES, principal, annualInterestRate })).toEqual({
+      valid: true,
+      request: {
+        startDate: VALID_VALUES.startDate,
+        endDate: VALID_VALUES.endDate,
+        firstPaymentDate: VALID_VALUES.firstPaymentDate,
+        principal: expectedPrincipal,
+        annualInterestRate: expectedRate,
+      },
+    })
+  })
 })

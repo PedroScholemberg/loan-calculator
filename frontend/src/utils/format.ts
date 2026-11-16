@@ -100,5 +100,6 @@ export function parseBrazilianDecimal(
 
   const fractionDigits = normalized.split('.')[1]?.length ?? 0
   const value = Number(normalized)
+  if (!Number.isFinite(value)) return { status: 'invalid' }
   return { status: 'ok', value: negative ? -value : value, fractionDigits }
 }

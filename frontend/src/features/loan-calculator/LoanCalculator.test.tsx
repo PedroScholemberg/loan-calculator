@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL } from '../../config/env'
@@ -182,6 +182,30 @@ describe('LoanCalculator', () => {
     expect(fields.annualInterestRate()).toHaveAccessibleDescription(
       expect.stringContaining('A taxa de juros não pode ser negativa.'),
     )
+  })
+
+  it.each([
+    ['principal', 'Informe um valor numérico válido, por exemplo 140.000,00.'],
+    ['annualInterestRate', 'Informe uma taxa numérica válida, por exemplo 7,00.'],
+  ] as const)('blocks overflowing %s values and displays the field error', async (field, message) => {
+    const fetchMock = mockFetch()
+    const user = setup()
+    await fillForm(user)
+    expect(calculateButton()).toBeEnabled()
+
+    const input = fields[field]()
+    fireEvent.change(input, { target: { value: '9'.repeat(309) } })
+    expect(calculateButton()).toBeDisabled()
+
+    await user.click(input)
+    await user.tab()
+    expect(input).toHaveValue('9'.repeat(309))
+    expect(input).toHaveAttribute('aria-invalid', 'true')
+    expect(input).toHaveAccessibleDescription(expect.stringContaining(message))
+
+    // Submitting directly also exercises the guard independently of the disabled button.
+    fireEvent.submit(input.closest('form')!)
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 
   it('sends the payload with ISO dates and plain numbers', async () => {
