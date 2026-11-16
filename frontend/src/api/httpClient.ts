@@ -36,6 +36,8 @@ export async function postJson(
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       method: 'POST',
+      // This API is unauthenticated; omit cookies shared by other apps on localhost.
+      credentials: 'omit',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify(payload),
       signal,
