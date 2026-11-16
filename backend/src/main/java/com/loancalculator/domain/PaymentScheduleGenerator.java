@@ -13,7 +13,6 @@ public class PaymentScheduleGenerator {
         LocalDate endDate = loan.getEndDate();
         LocalDate firstPaymentDate = loan.getFirstPaymentDate();
         int paymentDay = firstPaymentDate.getDayOfMonth();
-        boolean monthEndPayments = paymentDay == firstPaymentDate.lengthOfMonth();
         Map<LocalDate, ScheduleEvent> events = new TreeMap<>();
 
         eventOn(events, startDate).setLoanStart(true);
@@ -26,9 +25,7 @@ public class PaymentScheduleGenerator {
                 eventOn(events, monthEnd).setMonthEnd(true);
             }
 
-            LocalDate paymentDate = monthEndPayments
-                    ? monthEnd
-                    : month.atDay(Math.min(paymentDay, month.lengthOfMonth()));
+            LocalDate paymentDate = month.atDay(Math.min(paymentDay, month.lengthOfMonth()));
             if (!paymentDate.isBefore(firstPaymentDate)
                     && !paymentDate.isBefore(startDate)
                     && !paymentDate.isAfter(endDate)) {
