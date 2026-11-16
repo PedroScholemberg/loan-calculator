@@ -1,12 +1,12 @@
-# Frontend — Calculadora de Amortização
+# Frontend — Loan Calculator
 
 React 19 + TypeScript + Vite single-page app. Users enter loan parameters and
 get the amortization schedule calculated by the Spring Boot backend. The
 frontend performs **no financial calculations**; it validates input, calls
 the API, and formats the response for Brazilian users.
 
-The API contract the backend must implement is documented in
-[`BACKEND_CONTRACT.md`](./BACKEND_CONTRACT.md).
+The API behavior is documented in [business rules](../docs/business-rules.md)
+and the [architecture](../docs/architecture.md).
 
 ## Scripts
 
@@ -29,6 +29,9 @@ npm run preview      # serve the production build on http://localhost:4173
 
 Vite proxies `/api` to `http://localhost:8080` during development. No environment file is required. Copy `.env.example` to `.env.local` only to override the API origin. The value is
 read at build time, so set it before `npm run build` for other environments.
+
+`npm run preview` serves static assets without an API proxy. For a connected
+preview, build with an explicit backend API origin or use Docker Compose/Nginx.
 
 ## Structure
 
