@@ -96,6 +96,13 @@ npm run lint
 npm run build
 ```
 
+## Documentation
+
+- [Architecture](docs/architecture.md)
+- [Business rules](docs/business-rules.md)
+- [Technical decisions](docs/technical-decisions.md)
+- [Testing strategy](docs/testing.md)
+
 ## Known Limitations
 
-Payment dates falling on weekends are moved to the following Monday. Public holidays are not considered.
+Monthly payment dates falling on weekends are moved to the following Monday. The mandatory final payment remains on the end date. Public holidays are not considered.

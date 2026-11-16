@@ -1,6 +1,6 @@
 /**
  * Types for the backend contract `POST /api/v1/loans/amortization-schedule`.
- * Keep in sync with `BACKEND_CONTRACT.md`.
+ * See docs/business-rules.md for API behavior and field meanings.
  */
 
 /** ISO-8601 calendar date (`YYYY-MM-DD`), with no time or time zone. */
