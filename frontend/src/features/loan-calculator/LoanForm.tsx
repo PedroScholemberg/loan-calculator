@@ -164,7 +164,7 @@ export function LoanForm({ isSubmitting, onSubmit, onChange, onClear }: LoanForm
             Limpar
           </Button>
           <Button type="submit" disabled={isSubmitting || !validation.valid}>
-            {isSubmitting ? 'Calculando…' : 'Calcular amortização'}
+            {isSubmitting ? 'Calculando…' : 'Calcular'}
           </Button>
         </div>
       </form>

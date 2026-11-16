@@ -15,8 +15,8 @@ type CalculationState =
   | { status: 'error'; message: string; request: AmortizationScheduleRequest }
 
 const STATUS_MESSAGES: Partial<Record<CalculationState['status'], string>> = {
-  idle: 'Preencha os parâmetros do empréstimo e clique em “Calcular amortização” para visualizar o cronograma.',
-  stale: 'Os parâmetros foram alterados. Clique em “Calcular amortização” para gerar um novo cronograma.',
+  idle: 'Preencha os parâmetros do empréstimo e clique em “Calcular” para visualizar o cronograma.',
+  stale: 'Os parâmetros foram alterados. Clique em “Calcular” para gerar um novo cronograma.',
   loading: 'Calculando o cronograma de amortização…',
 }
 

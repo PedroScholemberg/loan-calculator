@@ -25,7 +25,7 @@ function jsonResponse(body: unknown, status = 200) {
 }
 
 describe('fetchAmortizationSchedule', () => {
-  it('posts the request as JSON to the configured endpoint', async () => {
+  it('posts the request as JSON without browser credentials to the configured endpoint', async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse(RESPONSE))
     vi.stubGlobal('fetch', fetchMock)
 
@@ -35,6 +35,7 @@ describe('fetchAmortizationSchedule', () => {
       `${API_BASE_URL}/api/v1/loans/amortization-schedule`,
       expect.objectContaining({
         method: 'POST',
+        credentials: 'omit',
         headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
       }),
     )
