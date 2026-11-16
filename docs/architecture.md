@@ -8,7 +8,7 @@ There is no database, authentication, saved simulation history, or external cale
 
 ```mermaid
 flowchart LR
-    Browser[Browser: React application] -->|localhost:8080| Nginx[Nginx: frontend container, port 80]
+    Browser[Browser: React application] -->|localhost:3000| Nginx[Nginx: frontend container, port 80]
     Nginx -->|static files or index.html fallback| Browser
     Nginx -->|/api/*, original path| API[Spring MVC: backend container, port 8080]
     API --> Service[Application service]
@@ -54,8 +54,8 @@ TypeScript types describe the response, but runtime validation only checks that 
 
 [compose.yaml](../compose.yaml) defines exactly two services on the default Compose network:
 
-- `backend`: Maven Wrapper runs `verify` in a JDK 17 build stage. A JRE 17 runtime runs the executable JAR as user 10001, with curl retained for readiness checks. Port 8080 is internal and has no host mapping.
-- `frontend`: Node.js 24 runs `npm ci` and `npm run build`. The runtime contains Nginx and static assets, with host port 8080 mapped to container port 80. It starts after the backend's `OPTIONS` readiness probe succeeds on the existing endpoint.
+- `backend`: Maven Wrapper runs `verify` in a JDK 17 build stage. A JRE 17 runtime runs the executable JAR as user 10001, with curl retained for readiness checks. Host port 8081 maps to container port 8080 for direct API access, Swagger UI (`/swagger-ui.html`), and the OpenAPI definition (`/v3/api-docs`).
+- `frontend`: Node.js 24 runs `npm ci` and `npm run build`. The runtime contains Nginx and static assets, with host port 3000 mapped to container port 80. It starts after the backend's `OPTIONS` readiness probe succeeds on the existing endpoint.
 
 [nginx.conf](../frontend/nginx.conf) proxies `/api/` to `http://backend:8080`, retaining the request URI and forwarding Host, client IP, forwarded chain, and scheme. Docker DNS is re-resolved periodically. Other paths use `try_files` with an `index.html` fallback; this supports SPA entry paths even though the current app has no client-side router.
 

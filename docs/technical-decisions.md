@@ -53,7 +53,9 @@ Vite builds static assets, and Nginx serves them without Node.js in the runtime 
 
 ## Deployment and stateless operation
 
-Compose supplies a two-container setup with one public origin. Nginx handles static files, SPA fallback, and API forwarding; the backend is reachable on the internal network but is not published independently. This avoids requiring browser-visible Docker names or CORS changes for the default execution path. Multi-stage builds separate compilation tools from runtime images. First builds still require dependency and base-image access, and moving base-image tags can change future builds.
+Compose supplies a two-container setup. Nginx on host port 3000 handles static files, SPA fallback, and API forwarding. Backend container port 8080 is also published on host port 8081 for direct API access and Swagger UI. The frontend continues to use its same-origin API proxy without requiring browser-visible Docker names or CORS changes. Multi-stage builds separate compilation tools from runtime images. First builds still require dependency and base-image access, and moving base-image tags can change future builds.
+
+springdoc-openapi generates the OpenAPI definition at `/v3/api-docs` and serves Swagger UI at `/swagger-ui.html`. Controller annotations describe success and Problem Details responses; request annotations supply field descriptions and usable examples while hiding validation helper properties from the schema.
 
 The backend readiness probe reuses `OPTIONS` on the existing endpoint instead of introducing a health endpoint. It gates frontend startup but does not test financial correctness or provide automatic recovery from later failures. Nginx's Docker DNS resolver accommodates backend address replacement.
 

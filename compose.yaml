@@ -2,8 +2,8 @@ services:
   backend:
     build:
       context: ./backend
-    expose:
-      - "8080"
+    ports:
+      - "8081:8080"
     healthcheck:
       # Verify HTTP readiness through the existing endpoint without calculating a loan.
       test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "--request", "OPTIONS", "http://127.0.0.1:8080/api/v1/loans/amortization-schedule"]
@@ -16,7 +16,7 @@ services:
     build:
       context: ./frontend
     ports:
-      - "8080:80"
+      - "3000:80"
     depends_on:
       backend:
         condition: service_healthy

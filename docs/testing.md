@@ -33,6 +33,7 @@ Test sources are under `backend/src/test/java/com/loancalculator/`.
 | [PaymentScheduleGeneratorTest](../backend/src/test/java/com/loancalculator/domain/PaymentScheduleGeneratorTest.java) | Plain-Java production calendar generation; no Spring context or spreadsheet calendar substitution. |
 | [LoanControllerTest](../backend/src/test/java/com/loancalculator/controller/LoanControllerTest.java) | `@WebMvcTest` and MockMvc exercise JSON binding, Bean Validation, delegation, and exception advice with a mocked service. Financial calculations do not execute in this slice. |
 | [LoanCalculatorApiApplicationTests](../backend/src/test/java/com/loancalculator/LoanCalculatorApiApplicationTests.java) | `@SpringBootTest` application-context smoke test; does not send HTTP calculation requests. |
+| [OpenApiDocumentationTest](../backend/src/test/java/com/loancalculator/OpenApiDocumentationTest.java) | Full application context with MockMvc verifies the generated API contract, required request fields, error schemas, Swagger UI assets, and definition URL. |
 
 The MVC slice integrates the transport components but is not an end-to-end financial integration test. There is no dedicated service-mapping test suite or live-server HTTP suite in the repository.
 
@@ -82,6 +83,6 @@ Component response fixtures contain arbitrary presentation values; they are not 
 
 ## Execution checks and limitations
 
-The repository has no committed browser end-to-end or Docker test harness. For a manual integration check, use the execution commands in the [README](../README.md), submit its example loan, and verify rendered results plus an HTTP 200 API call through the same public origin. In Docker, confirm that only frontend port 8080 is published and stop with `docker compose down`. Locally, verify requests through Vite on port 5173 with Spring Boot on port 8080.
+The repository has no committed browser end-to-end or Docker test harness. For a manual integration check, use the execution commands in the [README](../README.md), submit its example loan, and verify rendered results plus an HTTP 200 API call through the same public origin. In Docker, confirm that frontend port 3000 and backend port 8081 are published; open `http://localhost:8081/swagger-ui.html`, try the calculation endpoint, and stop with `docker compose down`. Locally, verify requests through Vite on port 5173 with Spring Boot and Swagger UI on port 8080.
 
 The backend Docker build runs Maven `verify`; the frontend Docker build runs `npm ci` and the production build, but not frontend tests or lint. Neither build alone validates browser behavior. Current automated scope does not establish comprehensive holiday handling, broad extreme-value behavior, performance/load limits, real-browser compatibility, complete accessibility conformance, or a production security baseline.
