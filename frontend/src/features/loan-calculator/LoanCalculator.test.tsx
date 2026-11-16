@@ -86,7 +86,7 @@ const fields = {
   annualInterestRate: () => screen.getByLabelText('Taxa de juros anual (%)'),
 }
 
-const calculateButton = () => screen.getByRole('button', { name: /calcular amortização|calculando/i })
+const calculateButton = () => screen.getByRole('button', { name: /^(calcular|calculando…)$/i })
 
 async function fillForm(
   user: ReturnType<typeof userEvent.setup>,
