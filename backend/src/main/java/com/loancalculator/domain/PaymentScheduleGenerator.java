@@ -32,7 +32,10 @@ public class PaymentScheduleGenerator {
             if (!paymentDate.isBefore(firstPaymentDate)
                     && !paymentDate.isBefore(startDate)
                     && !paymentDate.isAfter(endDate)) {
-                eventOn(events, paymentDate).setPayment(true);
+                LocalDate adjustedDate = adjustWeekend(paymentDate);
+                if (!adjustedDate.isAfter(endDate)) {
+                    eventOn(events, adjustedDate).setPayment(true);
+                }
             }
 
             if (month.equals(lastMonth)) {
@@ -51,6 +54,14 @@ public class PaymentScheduleGenerator {
         }
 
         return new PaymentSchedule(new ArrayList<>(events.values()));
+    }
+
+    private LocalDate adjustWeekend(LocalDate date) {
+        return switch (date.getDayOfWeek()) {
+            case SATURDAY -> date.plusDays(2);
+            case SUNDAY -> date.plusDays(1);
+            default -> date;
+        };
     }
 
     private ScheduleEvent eventOn(Map<LocalDate, ScheduleEvent> events, LocalDate date) {

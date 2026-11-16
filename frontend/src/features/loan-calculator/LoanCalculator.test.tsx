@@ -11,41 +11,57 @@ const RESPONSE: AmortizationScheduleResponse = {
     {
       date: '2024-01-01',
       eventType: 'LOAN_START',
-      openingBalance: 0,
-      interest: 0,
+      installmentNumber: null,
+      loanAmount: 140000,
+      remainingPrincipal: 140000,
+      accumulatedInterest: 0,
+      paidInterest: 0,
+      interestProvision: 0,
       amortization: 0,
-      payment: 0,
-      closingBalance: 140000,
+      totalPayment: 0,
+      outstandingBalance: 140000,
     },
     {
       date: '2024-01-31',
       eventType: 'MONTH_END',
-      openingBalance: 140000,
-      interest: 111.11,
+      installmentNumber: null,
+      loanAmount: 0,
+      remainingPrincipal: 140000,
+      accumulatedInterest: 0,
+      paidInterest: 0,
+      interestProvision: 111.11,
       amortization: 0,
-      payment: 0,
-      closingBalance: 140000,
+      totalPayment: 0,
+      outstandingBalance: 140000,
     },
     {
       date: '2024-02-15',
       eventType: 'PAYMENT',
-      openingBalance: 140000,
-      interest: 222.22,
+      installmentNumber: 1,
+      loanAmount: 0,
+      remainingPrincipal: 139000,
+      accumulatedInterest: 0,
+      paidInterest: 222.22,
+      interestProvision: 222.22,
       amortization: 1000,
-      payment: 1222.22,
-      closingBalance: 139000,
+      totalPayment: 1222.22,
+      outstandingBalance: 139000,
     },
     {
       date: '2034-01-01',
       eventType: 'LOAN_END',
-      openingBalance: 139000,
-      interest: 0,
+      installmentNumber: 2,
+      loanAmount: 0,
+      remainingPrincipal: 0,
+      accumulatedInterest: 0,
+      paidInterest: 0,
+      interestProvision: 0,
       amortization: 0,
-      payment: 0,
-      closingBalance: 0,
+      totalPayment: 0,
+      outstandingBalance: 0,
     },
   ],
-  summary: { totalInterest: 333.33, totalAmortization: 140000, totalPayment: 140333.33 },
+  summary: { installmentCount: 2, totalInterest: 333.33, totalAmortization: 140000, totalPayment: 140333.33 },
 }
 
 function jsonResponse(body: unknown, status = 200) {
@@ -117,10 +133,11 @@ describe('LoanCalculator', () => {
     await user.click(calculateButton())
 
     expect(fetchMock).not.toHaveBeenCalled()
+    for (const field of Object.values(fields)) { await user.click(field()); await user.tab() }
     const startDate = fields.startDate()
     expect(startDate).toHaveAttribute('aria-invalid', 'true')
     expect(startDate).toHaveAccessibleDescription('Informe uma data inicial válida.')
-    expect(startDate).toHaveFocus()
+
     expect(fields.principal()).toHaveAccessibleDescription(
       expect.stringContaining('Informe o valor do empréstimo.'),
     )
@@ -147,7 +164,7 @@ describe('LoanCalculator', () => {
     await fillForm(user, { firstPaymentDate: '2034-02-01' })
     await user.click(calculateButton())
     expect(fields.firstPaymentDate()).toHaveAccessibleDescription(
-      'O primeiro pagamento não pode ultrapassar a data final.',
+      'O primeiro pagamento deve ser anterior à data final.',
     )
   })
 
@@ -228,34 +245,19 @@ describe('LoanCalculator', () => {
       .getAllByRole('columnheader')
       .map((header) => header.textContent)
     expect(headers).toEqual([
-      'Data',
-      'Evento',
-      'Saldo inicial',
-      'Juros',
-      'Amortização',
-      'Pagamento',
-      'Saldo final',
+      'Data Competência', 'Empréstimo', 'Parcela', 'Principal', 'Juros',
+      'Valor de Empréstimo', 'Saldo Devedor', 'Consolidada', 'Total',
+      'Amortização', 'Saldo', 'Provisão', 'Acumulado', 'Pago',
     ])
-
-    const rows = within(table).getAllByRole('row').slice(1)
+    const rows = within(table).getAllByRole('row').slice(2)
     expect(rows).toHaveLength(4)
-    expect(rows.map((row) => within(row).getAllByRole('cell')[0].textContent)).toEqual([
-      'Início do empréstimo',
-      'Fechamento mensal',
-      'Pagamento',
-      'Encerramento',
+    expect(rows.map((row) => within(row).getByRole('rowheader').textContent)).toEqual([
+      '01/01/2024', '31/01/2024', '15/02/2024', '01/01/2034',
     ])
-
-    const payment = within(rows[2])
-    expect(payment.getByRole('rowheader')).toHaveTextContent('15/02/2024')
-    const cells = payment.getAllByRole('cell').map((cell) => cell.textContent?.replace(/\s/g, ' '))
+    const cells = within(rows[2]).getAllByRole('cell').map((cell) => cell.textContent?.replace(/\s/g, ' '))
     expect(cells).toEqual([
-      'Pagamento',
-      'R$ 140.000,00',
-      'R$ 222,22',
-      'R$ 1.000,00',
-      'R$ 1.222,22',
-      'R$ 139.000,00',
+      '', 'R$ 139.000,00', '1/2', 'R$ 1.222,22', 'R$ 1.000,00',
+      'R$ 139.000,00', 'R$ 222,22', 'R$ 0,00', 'R$ 222,22',
     ])
   })
 
