@@ -32,6 +32,30 @@ docker compose down
 ### Local Development
 
 Prerequisites: Java 17, Node.js 24, and npm. Maven Wrapper is included.
+**Maven CLI is optional.** The included Maven Wrapper runs the backend without a separate Maven installation.
+Only install Maven CLI if the wrapper fails and you need to use the fallback commands below.
+
+#### Install and verify the tools
+
+| Tool | Installation |
+| --- | --- |
+| Java JDK 17 | Install a JDK, such as [Eclipse Temurin](https://adoptium.net/installation/windows). Select version 17, set `JAVA_HOME` to the JDK directory, and add its `bin` directory to `PATH`. |
+| Node.js 24 and npm | Select version 24 on the [Node.js download page](https://nodejs.org/en/download) and install it. On Windows, use the `.msi` installer, which includes npm. |
+| Maven CLI (optional fallback) | Only install if the Maven Wrapper fails. Follow the [Apache Maven installation guide](https://maven.apache.org/install.html): download the binary archive, extract it, and add its `bin` directory to `PATH`. On Windows, use the binary ZIP archive. |
+
+Open a new terminal after installation and check:
+
+```bash
+java -version
+javac -version
+node --version
+npm --version
+```
+
+If you installed Maven CLI, also check `mvn --version`.
+
+#### Run the application
+
 Run the backend and frontend in separate terminals.
 
 Backend on Windows:
@@ -47,6 +71,22 @@ Backend on Linux/macOS:
 cd backend
 ./mvnw spring-boot:run
 ```
+
+Fallback only if the Maven Wrapper fails: install Maven CLI as described above, then run (Windows, Linux, or macOS):
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+Use one backend startup option. The wrapper downloads its configured Maven version on first use.
+If it keeps loading or fails with a download timeout or HTTP 502, use the installed Maven CLI
+to skip the wrapper's Maven download.
+
+On corporate networks, a proxy or firewall may interfere with the wrapper download.
+Ask IT to check access to `https://repo.maven.apache.org/maven2/`, including ZIP downloads.
+An installed Maven CLI still needs access to repositories for uncached dependencies.
+The wrapper cache is local to each computer; populating it on one machine does not fix downloads on another.
 
 Frontend:
 
@@ -95,6 +135,7 @@ cd backend
 ```
 
 Windows users can use `.\mvnw.cmd clean verify`.
+Only if the wrapper fails and you installed Maven CLI, use `mvn clean verify` on any platform.
 
 Frontend (after `npm ci`):
 
