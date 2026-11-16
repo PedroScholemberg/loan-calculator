@@ -16,7 +16,12 @@ Prerequisite: Docker with Compose support.
 docker compose up --build
 ```
 
-Application: http://localhost:8080
+- Application: http://localhost:3000
+- Backend API: http://localhost:8081
+- Swagger UI: http://localhost:8081/swagger-ui.html
+- OpenAPI JSON: http://localhost:8081/v3/api-docs
+
+Docker publishes backend port 8080 on host port 8081, while the frontend uses host port 3000.
 
 Stop:
 
@@ -53,6 +58,8 @@ npm run dev
 
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8080
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- OpenAPI JSON: http://localhost:8080/v3/api-docs
 
 Vite proxies `/api/*` requests to the local backend, preserving the request path.
 No environment files are required.
@@ -61,7 +68,9 @@ No environment files are required.
 
 `POST /api/v1/loans/amortization-schedule`
 
-With Docker, use `http://localhost:8080/api/v1/loans/amortization-schedule`.
+With Docker, call the backend directly at `http://localhost:8081/api/v1/loans/amortization-schedule`
+or through the frontend proxy at `http://localhost:3000/api/v1/loans/amortization-schedule`.
+Swagger UI documents the request, response schemas, and errors, and lets you try the endpoint.
 Send a JSON body with `Content-Type: application/json`:
 
 ```json
