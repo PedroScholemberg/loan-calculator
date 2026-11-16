@@ -55,13 +55,42 @@ class PaymentScheduleGeneratorTest {
         assertTrue(event(schedule, "2024-05-31").isPayment(), "Coincident payment and closing share an event");
     }
 
-    @Test
-    void nonMonthEndAnchorIsClampedWithoutBecomingAMonthEndAnchor() {
-        PaymentSchedule schedule = schedule("2024-01-01", "2024-01-30", "2024-04-10");
-        assertEquals(List.of(LocalDate.of(2024, 1, 30), LocalDate.of(2024, 2, 29),
-                LocalDate.of(2024, 4, 1), LocalDate.of(2024, 4, 10)), paymentDates(schedule));
-        assertTrue(event(schedule, "2024-02-29").isMonthEnd());
-        assertFalse(event(schedule, "2024-03-31").isPayment(), "March 30 moves to Monday April 1");
+    @ParameterizedTest
+    @CsvSource({
+            "2024-04-30, 2024-05-30, 2024-06-10",
+            "2024-02-29, 2024-03-29, 2024-04-10"
+    })
+    void firstPaymentAtMonthEndKeepsItsNumericalDay(LocalDate first, LocalDate next, LocalDate end) {
+        PaymentSchedule schedule = schedule(first.withDayOfMonth(1), first, end);
+        assertEquals(List.of(first, next, end), paymentDates(schedule));
+        assertTrue(event(schedule, first.toString()).isMonthEnd());
+        assertFalse(event(schedule, YearMonth.from(next).atEndOfMonth().toString()).isPayment());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "2024-01-31, 2024-02-29, 2024-04-01, 2024-04-10", // March 31 is Sunday
+            "2024-01-30, 2024-02-29, 2024-04-01, 2024-04-10", // March 30 is Saturday
+            "2023-01-30, 2023-02-28, 2023-03-30, 2023-04-10"
+    })
+    void shorterFebruaryDoesNotChangeOriginalAnchor(LocalDate first, LocalDate february,
+                                                    LocalDate marchAdjusted, LocalDate end) {
+        PaymentSchedule schedule = schedule(first.withDayOfMonth(1), first, end);
+        assertEquals(List.of(first, february, marchAdjusted, end), paymentDates(schedule));
+        assertTrue(event(schedule, february.toString()).isMonthEnd());
+        assertFalse(event(schedule, february.withMonth(3).withDayOfMonth(31).toString()).isPayment());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"2024-05-01", "2024-05-30"})
+    void monthEndFirstPaymentNearMaturityKeepsFinalPaymentUnique(LocalDate end) {
+        PaymentSchedule schedule = schedule(LocalDate.of(2024, 4, 1), LocalDate.of(2024, 4, 30), end);
+        assertEquals(List.of(LocalDate.of(2024, 4, 30), end), paymentDates(schedule));
+        assertEquals(List.of(LocalDate.of(2024, 4, 1), LocalDate.of(2024, 4, 30), end),
+                schedule.getEvents().stream().map(ScheduleEvent::getDate).toList());
+        assertTrue(event(schedule, "2024-04-30").isMonthEnd());
+        assertEquals(2, schedule.getInstallmentCount());
+        assertEquals(2, event(schedule, end.toString()).getInstallmentNumber());
     }
 
     @ParameterizedTest

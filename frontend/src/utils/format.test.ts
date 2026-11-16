@@ -66,4 +66,27 @@ describe('parseBrazilianDecimal', () => {
     expect(parseBrazilianDecimal('1,2,3')).toEqual({ status: 'invalid' })
     expect(parseBrazilianDecimal('14.00,00')).toEqual({ status: 'invalid' })
   })
+
+  it.each([
+    '9'.repeat(309),
+    `-${'9'.repeat(309)}`,
+    `${'999.'.repeat(102)}999,00`,
+    `${'9'.repeat(309)},5%`,
+    'NaN',
+    'Infinity',
+    '-Infinity',
+  ])('rejects non-finite numeric input: %s', (input) => {
+    expect(parseBrazilianDecimal(input)).toEqual({ status: 'invalid' })
+    expect(parseBrazilianDecimal(input, { dotAsGroupSeparator: false })).toEqual({
+      status: 'invalid',
+    })
+  })
+
+  it('accepts large finite values without an arbitrary upper limit', () => {
+    expect(parseBrazilianDecimal('9'.repeat(308))).toEqual({
+      status: 'ok',
+      value: Number('9'.repeat(308)),
+      fractionDigits: 0,
+    })
+  })
 })
