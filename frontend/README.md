@@ -25,9 +25,9 @@ npm run preview      # serve the production build on http://localhost:4173
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `VITE_API_BASE_URL` | `http://localhost:8080` | Base URL of the Spring Boot API |
+| `VITE_API_BASE_URL` | Same origin | Optional base URL of the Spring Boot API |
 
-Copy `.env.example` to `.env.local` to override it locally. The value is
+Vite proxies `/api` to `http://localhost:8080` during development. No environment file is required. Copy `.env.example` to `.env.local` only to override the API origin. The value is
 read at build time, so set it before `npm run build` for other environments.
 
 ## Structure
